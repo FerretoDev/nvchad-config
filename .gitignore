@@ -1,0 +1,11 @@
+
+
+# Ignorar archivos innecesarios
+
+plugin/
+
+lazy-lock.json
+
+*.log
+
+
