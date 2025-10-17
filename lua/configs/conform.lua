@@ -2,7 +2,7 @@ local options = {
   formatters_by_ft = {
 
     -- Conform will run multiple formatters sequentially
-    python = { "isort", "ruff_format" },
+    python = { "isort","ruff_format" },
     jinja = { "djlint" },
     --bash = { "shfmt" },
     --python = { "isort", "black"  },
@@ -29,7 +29,7 @@ local options = {
 
   },
   linters_by_ft = {
-    python = { "ruff_fix", "mypy" },
+    python = { "ruff_fix", "pyrefly" },
     -- python = { "pylint", "mypy" },
     jinja = { "jinja-lsp" },
     c = { "ast-grep" },
@@ -47,3 +47,4 @@ local options = {
   },
 }
 require("conform").setup(options)
+

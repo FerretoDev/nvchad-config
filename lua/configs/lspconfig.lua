@@ -4,7 +4,7 @@ require("nvchad.configs.lspconfig").defaults()
 local lspconfig = require "lspconfig"
 
 -- EXAMPLE
-local servers = { "html", "cssls", "ts_ls", "pyright", "marksman", "clangd", "omnisharp", "texlab" }
+local servers = { "html", "cssls", "ts_ls", "pyright", "ruff","marksman", "clangd", "omnisharp", "texlab" }
 local nvlsp = require "nvchad.configs.lspconfig"
 
 -- lsps with default config
@@ -134,20 +134,41 @@ lspconfig.texlab.setup {
 --    debounce_text_changes = 200,
 --  },
 --}
+
+-- PYRIGHT - solo para autocompletado y navegación
 lspconfig.pyright.setup {
-  on_attach = nvlsp.on_attach,
+  on_attach = function(client, bufnr)
+    -- Desactivar diagnósticos y análisis de pyright
+    client.server_capabilities.diagnosticProvider = false
+    client.server_capabilities.hoverProvider = true
+    client.server_capabilities.completionProvider = true
+    nvlsp.on_attach(client, bufnr)
+  end,
   on_init = nvlsp.on_init,
   capabilities = nvlsp.capabilities,
-  filetypes = { "python" },
   settings = {
     python = {
-      pythonPath = ".venv/bin/python", -- Añade el pythonPath aquí si usas un entorno virtual
       analysis = {
-        typeCheckingMode = "default",  -- Puedes ajustar esto según tus necesidades
+        autoImportCompletions = true,
+        typeCheckingMode = "off",
       },
     },
   },
-  flags = {
-    debounce_text_changes = 200,
-  },
 }
+
+
+-- RUFF LSP (Rust) - linter + formateador + organizador de imports
+lspconfig.ruff.setup {
+  on_attach = nvlsp.on_attach,
+  on_init = nvlsp.on_init,
+  capabilities = nvlsp.capabilities,
+}
+
+
+
+-- PYREFLY (Rust) - type checker
+--lspconfig.pyrefly.setup {
+  --on_attach = nvlsp.on_attach,
+  --on_init = nvlsp.on_init,
+  --capabilities = nvlsp.capabilities,
+--}

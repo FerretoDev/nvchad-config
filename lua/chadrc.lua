@@ -29,14 +29,15 @@ M.mason = {
     "prettierd",
 
     -- Python
-    "black",
+    --"black",
     "ruff",
-    -- "ruff-lsp",
-    "mypy",
+    "ruff-lsp",
+    --"mypy",
     "debugpy",
-    "pyright",
-    "pylint",
-    "isort",
+    "pyrefly",
+    --"pyright",
+    --"pylint",
+    --"isort",
 
     -- Jinja
     --"curlylint",
