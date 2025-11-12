@@ -14,7 +14,8 @@ local options = {
     -- "ruff_organize_imports",
     --
     -- Use a sub-list to run only the first available formatter
-    javascript = { { "prettierd", "prettier" } },
+  -- Ejecutar el primero disponible: usar una lista plana y Conform probará en orden
+  javascript = { "prettierd", "prettier" },
     css = { "prettier" },
     html = { "prettier" },
     typescript = { "prettier" },

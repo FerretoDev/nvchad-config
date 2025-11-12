@@ -1,174 +1,154 @@
--- load defaults i.e lua_lsp
-require("nvchad.configs.lspconfig").defaults()
+-- Migración completa al nuevo API de LSP, sin require('lspconfig')
 
-local lspconfig = require "lspconfig"
-
--- EXAMPLE
-local servers = { "html", "cssls", "ts_ls", "pyright", "ruff","marksman", "clangd", "omnisharp", "texlab" }
-local nvlsp = require "nvchad.configs.lspconfig"
-
--- lsps with default config
-for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-    on_attach = nvlsp.on_attach,
-    on_init = nvlsp.on_init,
-    capabilities = nvlsp.capabilities,
-  }
+-- 1) Utilidades
+local function root_pattern(...)
+  local patterns = { ... }
+  return function(startpath)
+    local path = startpath
+    if not path or path == "" then
+      path = vim.api.nvim_buf_get_name(0)
+    end
+    local found = vim.fs.find(patterns, { upward = true, path = path })
+    if #found > 0 then
+      return vim.fs.dirname(found[1])
+    end
+    return vim.loop.cwd()
+  end
 end
 
--- configuring single server, example: typescript
---lspconfig.ruff.setup {
---    on_attach = nvlsp.on_attach,
---    on_init = nvlsp.on_init,
---    capabilities = nvlsp.capabilities,
---}
--- configuring single server, example: typescript
--- lspconfig.tsserver.setup {
---   on_attach = nvlsp.on_attach,
---   on_init = nvlsp.on_init,
---   capabilities = nvlsp.capabilities,
--- }
+-- 2) Capacidades (nvim-cmp)
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+local ok_cmp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+if ok_cmp then
+  capabilities = cmp_lsp.default_capabilities(capabilities)
+end
 
---  typescript
-lspconfig.ts_ls.setup {
-  on_attach = nvlsp.on_attach,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-}
+-- 3) on_attach base
+local function on_attach(client, bufnr)
+  local map = function(mode, lhs, rhs, desc)
+    vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, silent = true, desc = desc })
+  end
+  map("n", "gd", vim.lsp.buf.definition, "LSP Definition")
+  map("n", "gr", vim.lsp.buf.references, "LSP References")
+  map("n", "K", vim.lsp.buf.hover, "LSP Hover")
+  map("n", "<leader>rn", vim.lsp.buf.rename, "LSP Rename")
+  map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP Code Action")
+end
 
--- C/C++
-lspconfig.clangd.setup {
-  on_attach = nvlsp.on_attach,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-}
-
--- Configuración para CMake
-lspconfig.cmake.setup {
-  on_attach = nvlsp.on_attach,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-  cmd = { "cmake-language-server" }, -- Comando para iniciar el servidor
-  filetypes = { "cmake" },           -- Tipos de archivos que usará el servidor
-  init_options = {
-    buildDirectory = "build"         -- Directorio de build, puedes modificarlo según tu estructura
-  },
-  flags = {
-    debounce_text_changes = 150, -- Ajuste de cambios de texto
-  },
-}
-
-
-
--- C#
-lspconfig.omnisharp.setup {
-  cmd = { "omnisharp" },
-  filetypes = { "cs" },
-  root_dir = lspconfig.util.root_pattern("*.csproj", "*.sln", ".git"),
-  on_attach = nvlsp.on_attach,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-
-}
-
---  LaTex
-
-lspconfig.texlab.setup {
-  on_attach = nvlsp.on_attach,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-}
-
---  Bash
---lspconfig.bash_language_server.setup {
---cmd = { 'bash-language-server' },
---on_attach = nvlsp.on_attach,
---on_init = nvlsp.on_init,
---capabilities = nvlsp.capabilities,
---}
-
-
-
-
---pythonff
---lspconfig.pyright.setup {
---  on_attach = nvlsp.on_attach,
---  on_init = nvlsp.on_init,
---  capabilities = nvlsp.capabilities,
---  filetypes = { "python" },
---  settings = {
---    organizeImports = true,
---    pylint = {
---      plugins = {
---        -- formatter options
---        black = { enabled = false },
---        ruff = { enabled = false },
---        -- autopep8 = { enabled = false },
---        -- yapf = { enabled = false },
---        --
---        -- linter options
---        pylint = { enabled = true }, -- executable = "pylint" },
---        pyright = { enabled = true },
---        -- ruff = { enabled = false },
---        -- pyflakes = { enabled = false },
---        -- pycodestyle = { enabled = false },
---        --
---        -- type checker
---        mypy = {
---          enabled = true,
---          report_progress = true,
---          live_mode = false,
---        },
---        -- auto-completion options
---        -- jedi_completion = { fuzzy = true },
---        --
---        -- import sorting
---        isort = { enabled = true },
---      },
---    },
---    python = {
---      pythonPath = ".venv/bin/python", -- Añade el pythonPath aquí
---    },
---  },
---  flags = {
---    debounce_text_changes = 200,
---  },
---}
-
--- PYRIGHT - solo para autocompletado y navegación
-lspconfig.pyright.setup {
-  on_attach = function(client, bufnr)
-    -- Desactivar diagnósticos y análisis de pyright
-    client.server_capabilities.diagnosticProvider = false
-    client.server_capabilities.hoverProvider = true
-    client.server_capabilities.completionProvider = true
-    nvlsp.on_attach(client, bufnr)
-  end,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-  settings = {
-    python = {
-      analysis = {
-        autoImportCompletions = true,
-        typeCheckingMode = "off",
+-- 4) Definición de servidores
+local servers = {
+  lua_ls = {
+    cmd = { "lua-language-server" },
+    filetypes = { "lua" },
+    root_dir = root_pattern(".luarc.json", ".luarc.jsonc", ".git"),
+    settings = {
+      Lua = {
+        workspace = { checkThirdParty = false },
+        completion = { callSnippet = "Replace" },
+        diagnostics = { globals = { "vim" } },
       },
     },
   },
+  html = {
+    cmd = { vim.fn.exepath("vscode-html-language-server") ~= "" and "vscode-html-language-server" or "html-lsp", "--stdio" },
+    filetypes = { "html" },
+    root_dir = root_pattern("package.json", ".git"),
+  },
+  cssls = {
+    cmd = { vim.fn.exepath("vscode-css-language-server") ~= "" and "vscode-css-language-server" or "css-lsp", "--stdio" },
+    filetypes = { "css", "scss", "less" },
+    root_dir = root_pattern("package.json", ".git"),
+  },
+  ts_ls = {
+    cmd = { "typescript-language-server", "--stdio" },
+    filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact" },
+    root_dir = root_pattern("package.json", "tsconfig.json", ".git"),
+  },
+  pyright = {
+    cmd = { "pyright-langserver", "--stdio" },
+    filetypes = { "python" },
+    root_dir = root_pattern("pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git"),
+    settings = {
+      python = { analysis = { autoImportCompletions = true, typeCheckingMode = "off" } },
+    },
+    on_attach = function(client, bufnr)
+      client.handlers["textDocument/publishDiagnostics"] = function() end
+      on_attach(client, bufnr)
+    end,
+  },
+  ruff = {
+    cmd = { "ruff", "server" },
+    filetypes = { "python" },
+    root_dir = root_pattern("pyproject.toml", "setup.cfg", "requirements.txt", ".git"),
+  },
+  marksman = {
+    cmd = { "marksman", "server" },
+    filetypes = { "markdown" },
+    root_dir = root_pattern(".git", "README.md"),
+  },
+  clangd = {
+    cmd = { "clangd" },
+    filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+    root_dir = root_pattern("compile_commands.json", "compile_flags.txt", ".git"),
+  },
+  omnisharp = {
+    cmd = { "omnisharp" },
+    filetypes = { "cs" },
+    root_dir = root_pattern("*.csproj", "*.sln", ".git"),
+  },
+  texlab = {
+    cmd = { "texlab" },
+    filetypes = { "tex", "bib" },
+    root_dir = root_pattern(".git", "main.tex"),
+  },
+  cmake = {
+    cmd = { "cmake-language-server" },
+    filetypes = { "cmake" },
+    init_options = { buildDirectory = "build" },
+    root_dir = root_pattern("CMakeLists.txt", ".git"),
+  },
 }
 
+-- 5) Auto-arranque por FileType sin lspconfig
+local function ensure_lsp_autostart(server_name, cfg)
+  local group = vim.api.nvim_create_augroup("LspAutostart-" .. server_name, { clear = true })
+  vim.api.nvim_create_autocmd("FileType", {
+    group = group,
+    pattern = cfg.filetypes or {},
+    callback = function(args)
+      local bufnr = args.buf
+      local bufname = vim.api.nvim_buf_get_name(bufnr)
+      local root = (type(cfg.root_dir) == "function") and cfg.root_dir(bufname) or cfg.root_dir or vim.loop.cwd()
 
--- RUFF LSP (Rust) - linter + formateador + organizador de imports
-lspconfig.ruff.setup {
-  on_attach = nvlsp.on_attach,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-}
+      -- Evitar duplicados por root/name
+      for _, client in pairs(vim.lsp.get_clients({ name = server_name })) do
+        if client.config and client.config.root_dir == root then
+          return
+        end
+      end
 
+      local final = vim.tbl_deep_extend("force", cfg, {
+        root_dir = root,
+        capabilities = capabilities,
+        on_attach = cfg.on_attach or on_attach,
+      })
 
+      if vim.lsp.config then
+        local lsp_cfg = vim.lsp.config(final)
+        vim.lsp.start(lsp_cfg)
+      else
+        vim.lsp.start(final)
+      end
+    end,
+  })
+end
 
--- PYREFLY (Rust) - type checker
---lspconfig.pyrefly.setup {
-  --on_attach = nvlsp.on_attach,
-  --on_init = nvlsp.on_init,
-  --capabilities = nvlsp.capabilities,
---}
+for name, cfg in pairs(servers) do
+  local exe = cfg.cmd and cfg.cmd[1]
+  if exe and vim.fn.exepath(exe) == "" then
+    vim.schedule(function()
+      vim.notify("[LSP] Ejecutable no encontrado para '" .. name .. "': " .. exe, vim.log.levels.WARN)
+    end)
+  end
+  ensure_lsp_autostart(name, cfg)
+end

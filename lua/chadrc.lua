@@ -23,18 +23,19 @@ M.mason = {
     "stylua",
 
     --javascript-
-    "html-lsp",
-    "css-lsp",
-    "prettier",
-    "prettierd",
+    "typescript-language-server", -- LSP
+    "prettierd", -- Formateador
+    "eslint_d", -- Linter
+    "js-debug-adapter", -- DAP
+
 
     -- Python
     --"black",
     "ruff",
-    "ruff-lsp",
+    "pyright",
     --"mypy",
     "debugpy",
-    "pyrefly",
+    --"pyrefly", -- no existe en mason
     --"pyright",
     --"pylint",
     --"isort",
@@ -53,6 +54,7 @@ M.mason = {
     "omnisharp",
     "csharpier",
     "netcoredbg",
+    
     --LaTex
     "texlab",
 

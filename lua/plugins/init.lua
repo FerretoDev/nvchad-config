@@ -46,9 +46,19 @@ return {
       "mfussenegger/nvim-dap",
       "rcarriga/nvim-dap-ui",
     },
-    config = function(_, opts)
-      local path = "~/.local/share/nvim/mason/packages/debugpy/venv/bin/python"
-      require("dap-python").setup(path)
+    config = function()
+      -- Resolver ruta de debugpy dinámicamente vía mason-registry para evitar paths hardcodeados
+      local ok, registry = pcall(require, "mason-registry")
+      local python_path
+      if ok then
+        local pkg_ok, pkg = pcall(registry.get_package, "debugpy")
+        if pkg_ok then
+          local install_path = pkg:get_install_path()
+          python_path = install_path .. "/venv/bin/python"
+        end
+      end
+      python_path = python_path or vim.fn.exepath("python3") or "python"
+      require("dap-python").setup(python_path)
     end,
   },
 
@@ -98,49 +108,7 @@ return {
     end
   },
 
-  {
-    'hrsh7th/nvim-cmp',
-    dependencies = {
-      'hrsh7th/cmp-nvim-lsp',     -- Fuente para autocompletado de LSP
-      'hrsh7th/cmp-buffer',       -- Fuente para autocompletado de buffer
-      'hrsh7th/cmp-path',         -- Fuente para autocompletado de ruta de archivos
-      'hrsh7th/cmp-cmdline',      -- Fuente para autocompletado en la línea de comandos
-      'saadparwaiz1/cmp_luasnip', -- Fuente para autocompletado de snippets (LuSnip)
-      'L3MON4D3/LuaSnip',         -- Snippet Engine
-      'onsails/lspkind.nvim',     -- Añade iconos a los elementos completados
-    },
-    config = function()
-      local cmp = require('cmp')
-      local lspkind = require('lspkind')
-
-      cmp.setup({
-        snippet = {
-          expand = function(args)
-            require('luasnip').lsp_expand(args.body)
-          end,
-        },
-        mapping = {
-          ['<Tab>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-          ['<S-Tab>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-          ['<CR>'] = cmp.mapping.confirm({ select = true }),
-          ['<C-Space>'] = cmp.mapping.complete(),
-        },
-        sources = cmp.config.sources({
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-          { name = 'buffer' },
-          { name = 'path' },
-          { name = "supermaven" },
-        }),
-        formatting = {
-          format = lspkind.cmp_format({
-            mode = 'symbol_text', -- Show both symbol and text
-            maxwidth = 50,        -- Limit the width of the completion item
-          })
-        }
-      })
-    end
-  },
+  -- nvim-cmp se configura en `lua/plugins/cmp.lua` para evitar duplicados
   {
     "nvchad/volt",
     lazy = true
