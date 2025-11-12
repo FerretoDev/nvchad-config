@@ -1,6 +1,10 @@
 -- none-ls: Integración de herramientas externas para formateo y linting
 local null_ls = require("null-ls")
 
+-- Agregar Mason bin al PATH para que none-ls encuentre las herramientas
+local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
+vim.env.PATH = mason_bin .. ":" .. vim.env.PATH
+
 -- Variable global para controlar qué type checker está activo
 _G.python_type_checker = "mypy" -- Opciones: "mypy" o "pyrefly"
 
@@ -40,37 +44,46 @@ null_ls.setup({
   sources = {
     -- ============ PYTHON ============
     
-    -- RUFF: Linter + Formatter combinado
-    -- Ruff soporta ambas funcionalidades en un solo builtin
-    null_ls.builtins.diagnostics.ruff,
-    null_ls.builtins.formatting.ruff,
-
-    -- TYPE CHECKER: Mypy (ajustar según necesites)
+    -- RUFF: Se usa como LSP (configurado en lspconfig.lua)
+    -- No como builtin de none-ls porque no está disponible
+    
+    -- TYPE CHECKER: Mypy (dinámico - puede cambiar a pyrefly con :TogglePythonTypeChecker)
     diagnostics.mypy.with({
       extra_args = function()
+        -- Solo ejecutar si es el type checker activo
+        if _G.python_type_checker ~= "mypy" then
+          return nil
+        end
         return {
           "--show-column-numbers",
           "--show-error-end",
+          "--no-color-output",
+          "--no-error-summary",
+          "--no-pretty",
         }
+      end,
+      -- Solo ejecutar si mypy está activo
+      condition = function()
+        return _G.python_type_checker == "mypy"
       end,
     }),
 
     -- ============ OTROS LENGUAJES ============
     
-    -- Lua
+    -- Lua (si tienes stylua instalado)
     formatting.stylua,
 
-    -- JavaScript/TypeScript
+    -- JavaScript/TypeScript (si tienes prettier instalado)
     formatting.prettier.with({
       filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "html", "css", "markdown" },
     }),
 
-    -- C/C++
-    formatting.clang_format,
+    -- C/C++ (si tienes clang-format instalado)
+    -- formatting.clang_format,
 
-    -- Shell
-    diagnostics.shellcheck,
-    formatting.shfmt,
+    -- Shell (comentado - descomentar si instalas shellcheck y shfmt)
+    -- diagnostics.shellcheck,
+    -- formatting.shfmt,
   },
 
   -- Formateo automático al guardar
@@ -103,7 +116,17 @@ vim.api.nvim_create_user_command("TogglePythonTypeChecker", function()
   end
   
   -- Reiniciar none-ls para aplicar cambios
-  vim.cmd("LspRestart null-ls")
+  -- Buscar el cliente de none-ls y reiniciarlo
+  for _, client in pairs(vim.lsp.get_clients()) do
+    if client.name == "null-ls" then
+      vim.cmd("LspRestart " .. client.id)
+      vim.notify("none-ls reiniciado", vim.log.levels.INFO)
+      return
+    end
+  end
+  
+  -- Si no se encuentra, intentar reiniciar todos los LSP de Python
+  vim.notify("Reiniciando LSP... Cierra y vuelve a abrir el archivo", vim.log.levels.WARN)
 end, { desc = "Alternar entre mypy y pyrefly para type checking" })
 
 -- Comando para ver qué type checker está activo

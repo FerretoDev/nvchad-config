@@ -86,18 +86,22 @@ lspconfig.pyright.setup {
   },
 }
 
--- Python: ruff LSP (OPCIONAL - comentado porque none-ls lo maneja mejor)
--- Si prefieres usar ruff como LSP en lugar de via none-ls, descomenta esto:
--- lspconfig.ruff.setup {
---   on_attach = function(client, bufnr)
---     -- Desactivar formateo, lo maneja none-ls
---     client.server_capabilities.documentFormattingProvider = false
---     nvlsp.on_attach(client, bufnr)
---   end,
---   on_init = nvlsp.on_init,
---   capabilities = nvlsp.capabilities,
---   filetypes = { "python" },
--- }
+-- Python: ruff LSP - Para linting y formateo
+-- Ruff funciona mejor como LSP que via none-ls
+lspconfig.ruff.setup {
+  on_attach = nvlsp.on_attach,
+  on_init = nvlsp.on_init,
+  capabilities = nvlsp.capabilities,
+  filetypes = { "python" },
+  init_options = {
+    settings = {
+      -- Configuración por defecto de ruff para evitar errores
+      -- Puedes sobrescribirla creando ruff.toml o pyproject.toml en tu proyecto
+      args = {},
+      logLevel = "error",
+    }
+  },
+}
 
 -- CMake (comentado - instalar con :MasonInstall cmake-language-server si lo necesitas)
 -- lspconfig.cmake.setup {

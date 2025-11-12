@@ -2,6 +2,8 @@
     "cSpell.words": [
         "augroup",
         "autocmd",
+        "autocmds",
+        "Autoformateo",
         "bufname",
         "bufnr",
         "cssls",
@@ -25,6 +27,7 @@
         "objc",
         "objcpp",
         "omnisharp",
+        "pylint",
         "pyproject",
         "pyrefly",
         "pyright",
