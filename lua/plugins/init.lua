@@ -47,17 +47,18 @@ return {
       "rcarriga/nvim-dap-ui",
     },
     config = function()
-      -- Resolver ruta de debugpy dinámicamente vía mason-registry para evitar paths hardcodeados
-      local ok, registry = pcall(require, "mason-registry")
-      local python_path
-      if ok then
-        local pkg_ok, pkg = pcall(registry.get_package, "debugpy")
-        if pkg_ok then
-          local install_path = pkg:get_install_path()
-          python_path = install_path .. "/venv/bin/python"
+      local python_path = vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or "python"
+      -- Intento opcional de usar debugpy si ya está instalado
+      local ok_mason, registry = pcall(require, "mason-registry")
+      if ok_mason and registry.has_package("debugpy") then
+        local pkg = registry.get_package("debugpy")
+        if pkg:is_installed() then
+          local dbg = pkg:get_install_path() .. "/venv/bin/python"
+          if vim.loop.fs_stat(dbg) then
+            python_path = dbg
+          end
         end
       end
-      python_path = python_path or vim.fn.exepath("python3") or "python"
       require("dap-python").setup(python_path)
     end,
   },
