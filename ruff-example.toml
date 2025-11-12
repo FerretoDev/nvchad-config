@@ -1,0 +1,64 @@
+# Configuración de ejemplo para Ruff
+# Copia esto a tu pyproject.toml del proyecto
+
+[tool.ruff]
+# Longitud máxima de línea
+line-length = 88
+
+# Python version target
+target-version = "py311"
+
+# Directorios a excluir
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+# Reglas a activar (puedes agregar más)
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (organizador de imports)
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+
+# Reglas a ignorar
+ignore = [
+    "E501",  # line too long (lo maneja el formatter)
+]
+
+# Permitir auto-fix para estas reglas
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+# Usar comillas dobles
+quote-style = "double"
+
+# Indentar con espacios
+indent-style = "space"
+
+# Respetar magic trailing comma
+skip-magic-trailing-comma = false
+
+# Estilo de finales de línea
+line-ending = "auto"
+
+[tool.ruff.lint.isort]
+# Configuración de import sorting
+known-first-party = ["your_package_name"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+[tool.mypy]
+# Configuración de mypy (si lo usas)
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false

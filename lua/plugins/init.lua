@@ -16,6 +16,18 @@ return {
     end,
   },
 
+  -- none-ls: integración de herramientas externas (formatters, linters)
+  {
+    "nvimtools/none-ls.nvim",
+    event = "VeryLazy",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+      require "configs.none-ls"
+    end,
+  },
+
   {
     "rcarriga/nvim-dap-ui",
     dependencies = "mfussenegger/nvim-dap",
@@ -48,14 +60,20 @@ return {
     },
     config = function()
       local python_path = vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or "python"
-      -- Intento opcional de usar debugpy si ya está instalado
+      -- Intento opcional de usar debugpy si ya está instalado vía Mason
       local ok_mason, registry = pcall(require, "mason-registry")
-      if ok_mason and registry.has_package("debugpy") then
-        local pkg = registry.get_package("debugpy")
-        if pkg:is_installed() then
-          local dbg = pkg:get_install_path() .. "/venv/bin/python"
-          if vim.loop.fs_stat(dbg) then
-            python_path = dbg
+      if ok_mason then
+        local ok_pkg, pkg = pcall(registry.get_package, "debugpy")
+        if ok_pkg then
+          local ok_installed, is_installed = pcall(function() return pkg:is_installed() end)
+          if ok_installed and is_installed then
+            local ok_path, install_path = pcall(function() return pkg:get_install_path() end)
+            if ok_path and install_path then
+              local dbg = install_path .. "/venv/bin/python"
+              if vim.loop.fs_stat(dbg) then
+                python_path = dbg
+              end
+            end
           end
         end
       end

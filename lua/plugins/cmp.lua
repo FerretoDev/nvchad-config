@@ -22,37 +22,20 @@ return {
             },
             mapping = cmp.mapping.preset.insert(mappings),
             sources = cmp.config.sources({
-                -- { name = "supermaven",   priority = 1000 }, -- SuperMaven como fuente
-                { name = "copilot",      priority = 1000 }, -- Copilot como fuente
-                { name = "buffer",       priority = 800 },  -- Texto en el buffer actual
-                { name = "path",         priority = 800 },  -- Rutas de archivos
+                { name = "nvim_lsp",     priority = 1000 }, -- Completado de LSP (máxima prioridad)
                 { name = "luasnip",      priority = 750 },  -- Snippets con LuaSnip
-                { name = "nvim_lsp",     priority = 900 },  -- Completado de LSP
-                { name = "latex_symbols" },                 -- Autocompletado de símbolos LaTeX
+                { name = "buffer",       priority = 500 },  -- Texto en el buffer actual
+                { name = "path",         priority = 250 },  -- Rutas de archivos
             }),
 
             sorting = {
                 priority_weight = 2,
                 comparators = {
-                    function(entry1, entry2)
-                        local kind_priority = {
-                            Variable = 1,
-                            Method = 2,
-                            Function = 2,
-                            Class = 3,
-                        }
-
-                        local kind1 = kind_priority[entry1:get_kind()] or 100
-                        local kind2 = kind_priority[entry2:get_kind()] or 100
-
-                        if kind1 ~= kind2 then
-                            return kind1 < kind2
-                        end
-                    end,
                     cmp.config.compare.offset,
                     cmp.config.compare.exact,
                     cmp.config.compare.score,
                     cmp.config.compare.recently_used,
+                    cmp.config.compare.kind,
                     cmp.config.compare.locality,
                     cmp.config.compare.order,
                 },
