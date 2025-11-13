@@ -47,25 +47,16 @@ null_ls.setup({
     -- RUFF: Se usa como LSP (configurado en lspconfig.lua)
     -- No como builtin de none-ls porque no está disponible
     
-    -- TYPE CHECKER: Mypy (dinámico - puede cambiar a pyrefly con :TogglePythonTypeChecker)
+    -- TYPE CHECKER: Mypy
     diagnostics.mypy.with({
-      extra_args = function()
-        -- Solo ejecutar si es el type checker activo
-        if _G.python_type_checker ~= "mypy" then
-          return nil
-        end
-        return {
-          "--show-column-numbers",
-          "--show-error-end",
-          "--no-color-output",
-          "--no-error-summary",
-          "--no-pretty",
-        }
-      end,
-      -- Solo ejecutar si mypy está activo
-      condition = function()
-        return _G.python_type_checker == "mypy"
-      end,
+      extra_args = {
+        "--show-column-numbers",
+        "--show-error-end",
+        "--no-color-output",
+        "--no-error-summary",
+        "--no-pretty",
+        "--check-untyped-defs",  -- Verificar funciones sin type hints
+      },
     }),
 
     -- ============ OTROS LENGUAJES ============
