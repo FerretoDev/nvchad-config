@@ -91,6 +91,23 @@ null_ls.setup({
         end,
       })
     end
+    
+    -- Para archivos Python, actualizar diagnósticos después de guardar
+    if vim.bo[bufnr].filetype == "python" then
+      local diag_augroup = vim.api.nvim_create_augroup("NoneLsDiagnostics", { clear = false })
+      vim.api.nvim_create_autocmd("BufWritePost", {
+        group = diag_augroup,
+        buffer = bufnr,
+        callback = function()
+          -- Esperar un poco para que mypy termine
+          vim.defer_fn(function()
+            vim.diagnostic.reset(nil, bufnr)
+            -- Forzar actualización de diagnósticos
+            vim.lsp.buf.document_highlight()
+          end, 500)
+        end,
+      })
+    end
   end,
 })
 

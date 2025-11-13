@@ -19,7 +19,8 @@ return {
   -- none-ls: integración de herramientas externas (formatters, linters)
   {
     "nvimtools/none-ls.nvim",
-    event = "VeryLazy",
+    lazy = true,
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
