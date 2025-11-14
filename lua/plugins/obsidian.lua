@@ -25,8 +25,8 @@ return {
       {
         name = "obsidian-student-vault",
         --path = "~/OneDrive_MarcosDev@8n2f0w.onmicrosoft.com/Obsidian/Cloud Files/obsidian-student-vault",
-        path = "/mnt/c/Users/marco/OneDrive - MSFT/Obsidian/Cloud Files/obsidian-student-vault",
-
+        --path = "/mnt/c/Users/marco/OneDrive - MSFT/Obsidian/Cloud Files/obsidian-student-vault",
+        path = "/home/maru/Sync/Obsidian/Cloud Files/obsidian-student-vault",
         -- Optional, override certain settings.
         overrides = {
           notes_subdir = "000 - Inbox",       -- Subdirectory for notes
@@ -72,8 +72,6 @@ return {
           --return current_time .. "_" .. formatted_title
           --end,
 
-
-
           -- function to generate frontmatter for notes
           note_frontmatter_func = function(note)
             -- This is equivalent to the default frontmatter function.
@@ -112,13 +110,11 @@ return {
           follow_url_func = function(url)
             -- Open the URL in the default web browser.
             --vim.fn.jobstart({ "open", url }) -- Mac OS
-            vim.fn.jobstart({ "xdg-open", url }) -- linux
+            vim.fn.jobstart { "xdg-open", url } -- linux
             -- vim.cmd(':silent exec "!start ' .. url .. '"') -- Windows
-            vim.ui.open(url)                     -- need Neovim 0.10.0+
+            vim.ui.open(url)                    -- need Neovim 0.10.0+
           end,
           use_advanced_uri = false,
-
-
 
           -- Settings for templates
           templates = {
@@ -143,16 +139,10 @@ return {
       },
     },
 
-
-
     -- see below for full list of options 👇
     -- Mapping para toggle frontmatter
     --map("n", "<leader>of", function()
     --opts.workspaces[1].overrides.toggle_frontmatter()
     --end, { desc = "Toggle Frontmatter" })
-
-
   },
-
-
 }
