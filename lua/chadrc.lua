@@ -23,21 +23,31 @@ M.mason = {
     "stylua",
 
     --javascript-
-    "html-lsp",
-    "css-lsp",
-    "prettier",
-    "prettierd",
+    "typescript-language-server", -- LSP
+    "prettierd", -- Formateador
+    "eslint_d", -- Linter
+    "js-debug-adapter", -- DAP
+
+    --CSS
+    "css-lsp", -- LSP
+    "tailwindcss-language-server", -- LSP
+    "stylelint", -- Linter
+    -- #"prettierd", -- Formateador
+
+    -- HTML
+    "html-lsp", -- LSP
+    "htmlhint", -- Linter
+    -- #"prettierd", -- Formateador
+
 
     -- Python
-    --"black",
-    "ruff",
-    "ruff-lsp",
-    --"mypy",
-    "debugpy",
-    "pyrefly",
-    --"pyright",
-    --"pylint",
-    --"isort",
+    "pyright", -- LSP principal (autocompletado, imports, análisis)
+    "ruff", -- Linter + Formateador + Organizador de imports (via none-ls)
+    "mypy", -- Type checker (alternativa 1, via none-ls)
+    -- "pyrefly", -- Type checker AI (alternativa 2, via none-ls) - Descomentar si lo usas
+    "debugpy", -- DAP
+    -- "black", -- DESACTIVADO - Ruff lo reemplaza
+    -- "isort", -- DESACTIVADO - Ruff lo reemplaza
 
     -- Jinja
     --"curlylint",
@@ -47,12 +57,17 @@ M.mason = {
     -- C/C++
     "clangd",
     "clang-format",
-    "ast-grep",
+    "ast-grep", 
+
+    -- CMake
+    "cmake-language-server", --LSP
+
 
     --C#
     "omnisharp",
     "csharpier",
     "netcoredbg",
+
     --LaTex
     "texlab",
 
@@ -60,6 +75,9 @@ M.mason = {
     "bash-language-server",
     "shellcheck",
     "shfmt",
+
+    -- Markdown
+    "marksman", -- LSP
 
   },
 }

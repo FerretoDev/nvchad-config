@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+<<<<<<< HEAD
         "autocompletado",
         "bufnr",
         "cmakelang",
@@ -16,5 +17,45 @@
         "PYREFLY",
         "pyright",
         "shfmt"
+=======
+        "augroup",
+        "autocmd",
+        "autocmds",
+        "Autoformateo",
+        "bufname",
+        "bufnr",
+        "cssls",
+        "cuda",
+        "debugpy",
+        "exepath",
+        "Formateador",
+        "htmlhint",
+        "isort",
+        "keymap",
+        "langserver",
+        "lspconfig",
+        "luarc",
+        "mfussenegger",
+        "mypy",
+        "neotest",
+        "nvchad",
+        "nvdash",
+        "nvim",
+        "nvimtools",
+        "nvlsp",
+        "objc",
+        "objcpp",
+        "omnisharp",
+        "pylint",
+        "pyproject",
+        "pyrefly",
+        "pyright",
+        "rcarriga",
+        "startpath",
+        "stdpath",
+        "tailwindcss",
+        "texlab",
+        "venv"
+>>>>>>> cf6e699aca42c165eacbe00d4009660c60d1d208
     ]
 }
