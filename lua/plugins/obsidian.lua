@@ -31,7 +31,7 @@ return {
         overrides = {
           notes_subdir = "000 - Inbox",       -- Subdirectory for notes
           new_notes_location = "000 - Inbox", -- Location for new notes
-          note_templates = "z - Templates",
+          note_templates = "z - Templates/Nvim",
           preferred_link_style = "wiki",
 
           disable_frontmatter = false,
@@ -118,7 +118,7 @@ return {
 
           -- Settings for templates
           templates = {
-            subdir = "z - Templates", -- Subdirectory for templates
+            subdir = "z - Templates/Nvim", -- Subdirectory for templates
             date_format = "%Y-%m-%d", -- Date format for templates
             gtime_format = "%H:%M",   -- Time format for templates
             tags = "",                -- Default tags for templates
