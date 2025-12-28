@@ -1,5 +1,23 @@
 {
     "cSpell.words": [
+<<<<<<< HEAD
+        "autocompletado",
+        "bufnr",
+        "cmakelang",
+        "cmakelint",
+        "csharpier",
+        "djlint",
+        "formateador",
+        "isort",
+        "jinja",
+        "lspconfig",
+        "mypy",
+        "omnisharp",
+        "pyrefly",
+        "PYREFLY",
+        "pyright",
+        "shfmt"
+=======
         "augroup",
         "autocmd",
         "autocmds",
@@ -39,5 +57,6 @@
         "tailwindcss",
         "texlab",
         "venv"
+>>>>>>> cf6e699aca42c165eacbe00d4009660c60d1d208
     ]
 }
