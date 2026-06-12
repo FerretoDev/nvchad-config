@@ -1,51 +1,32 @@
 local options = {
   formatters_by_ft = {
+    lua = { "stylua" },
 
-    -- Conform will run multiple formatters sequentially
-    python = { "isort","ruff_format" },
+    python = { "ruff_organize_imports", "ruff_format" },
     jinja = { "djlint" },
-    --bash = { "shfmt" },
-    --python = { "isort", "black"  },
-    -- To fix auto-fixable lint errors.
-    --"ruff_fix",
-    -- To run the Ruff formatter.
-    -- "ruff_format",
-    -- To organize the imports.
-    -- "ruff_organize_imports",
-    --
-    -- Use a sub-list to run only the first available formatter
-  -- Ejecutar el primero disponible: usar una lista plana y Conform probará en orden
-  javascript = { "prettierd", "prettier" },
-    css = { "prettier" },
-    html = { "prettier" },
-    typescript = { "prettier" },
-    typescriptreact = { "prettier" },
-    javascriptreact = { "prettier" },
-    markdown = { "prettier" },
+
+    javascript = { "prettierd", "prettier", stop_after_first = true },
+    typescript = { "prettierd", "prettier", stop_after_first = true },
+    javascriptreact = { "prettierd", "prettier", stop_after_first = true },
+    typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+    
+    css = { "prettierd", "prettier", stop_after_first = true },
+    html = { "prettierd", "prettier", stop_after_first = true },
+    json = { "prettierd", "prettier", stop_after_first = true },
+    markdown = { "prettierd", "prettier", stop_after_first = true },
+    
     c = { "clang-format" },
     cpp = { "clang-format" },
     cs = { "csharpier" },
-    --cs = { "clang-format" },
-    cmake = { "cmakelang" }
-
-  },
-  linters_by_ft = {
-    python = { "ruff_fix", "pyrefly" },
-    -- python = { "pylint", "mypy" },
-    jinja = { "jinja-lsp" },
-    c = { "ast-grep" },
-    cpp = { "ast-grep" },
-    cs = { "ast-grep" },
-    cmake = { "cmakelint" },
-    --bash = { "shellcheck" }
+    
+    cmake = { "cmakelang" },
+    sh = { "shfmt" },
   },
 
   format_on_save = {
-    -- These options will be passed to conform.format()
     timeout_ms = 500,
-    lsp_format = "fallback",
-    -- lsp_fallback = true,
+    lsp_fallback = true,
   },
 }
-require("conform").setup(options)
 
+require("conform").setup(options)

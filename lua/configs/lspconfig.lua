@@ -1,126 +1,74 @@
--- Silenciar advertencia de deprecación de lspconfig
-local original_notify = vim.notify
-vim.notify = function(msg, level, opts)
-  if msg and msg:match("lspconfig.*deprecated") then
-    return
+-- Desactivar avisos de deprecación que causan errores en Neovim 0.11/0.12
+local function silence_warnings()
+  local old_notify = vim.notify
+  vim.notify = function(msg, level, opts)
+    if type(msg) == "string" and (msg:match "lspconfig" or msg:match "deprecated") then
+      return
+    end
+    return old_notify(msg, level, opts)
   end
-  original_notify(msg, level, opts)
+  vim.deprecate = function() end
 end
 
-local original_deprecate = vim.deprecate
-vim.deprecate = function(...)
-  -- Silenciar completamente vim.deprecate para lspconfig
-  local info = debug.getinfo(2, "S")
-  if info and info.source and info.source:match("lspconfig") then
-    return
-  end
-  original_deprecate(...)
-end
+silence_warnings()
 
--- Agregar Mason bin al PATH
-local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
-vim.env.PATH = mason_bin .. ":" .. vim.env.PATH
-
--- load defaults i.e lua_lsp
-require("nvchad.configs.lspconfig").defaults()
+-- Cargar defaults de NvChad
+local ok_defaults, _ = pcall(function()
+  require("nvchad.configs.lspconfig").defaults()
+end)
 
 local lspconfig = require "lspconfig"
 local nvlsp = require "nvchad.configs.lspconfig"
 
--- Lista de servidores básicos (lua_ls ya está configurado por NvChad defaults)
-local servers = { "html", "cssls", "ts_ls", "marksman", "clangd", "texlab" }
+-- Servidores con configuración estándar
+local servers = { "html", "cssls", "ts_ls", "marksman", "clangd", "texlab", "bashls", "omnisharp" }
 
--- Configurar servidores con config por defecto
 for _, lsp in ipairs(servers) do
-  local ok, err = pcall(function()
-    lspconfig[lsp].setup {
-      on_attach = nvlsp.on_attach,
-      on_init = nvlsp.on_init,
-      capabilities = nvlsp.capabilities,
-    }
-  end)
-  if not ok then
-    vim.schedule(function()
-      vim.notify("Error configurando LSP '" .. lsp .. "': " .. tostring(err), vim.log.levels.ERROR)
-    end)
-  end
+  lspconfig[lsp].setup {
+    on_attach = nvlsp.on_attach,
+    on_init = nvlsp.on_init,
+    capabilities = nvlsp.capabilities,
+  }
 end
 
--- Python: pyright - Solo para LSP (autocompletado, importaciones inteligentes)
--- Diagnósticos, formateo y linting delegados a none-ls (ruff + mypy/pyrefly)
+-- Python: Ruff (LSP Principal para Linting y Formateo)
+-- Astral.sh - Proporciona diagnósticos rápidos y precisos.
+lspconfig.ruff.setup {
+  on_attach = nvlsp.on_attach,
+  on_init = nvlsp.on_init,
+  capabilities = nvlsp.capabilities,
+}
+
+-- Python: Pyright (Restaurado para Navegación e Imports)
+-- Configurado como servidor SILENCIOSO para evitar duplicidad.
 lspconfig.pyright.setup {
   on_attach = function(client, bufnr)
-    -- Desactivar completamente diagnósticos de pyright
-    -- Ruff y mypy/pyrefly manejan esto via none-ls
-    client.server_capabilities.documentFormattingProvider = false
-    client.server_capabilities.documentRangeFormattingProvider = false
+    -- BLOQUEO DE DIAGNÓSTICOS: Pyright solo sirve para navegación e inteligencia.
     client.server_capabilities.diagnosticProvider = false
-    
     nvlsp.on_attach(client, bufnr)
   end,
   on_init = nvlsp.on_init,
   capabilities = nvlsp.capabilities,
-  filetypes = { "python" },
   settings = {
     python = {
       analysis = {
-        -- Configuración optimizada para LSP (no para diagnósticos)
         autoSearchPaths = true,
         useLibraryCodeForTypes = true,
-        autoImportCompletions = true,
-        diagnosticMode = "openFilesOnly", -- Solo archivos abiertos, no todo el workspace
-        typeCheckingMode = "off", -- Delegado a mypy/pyrefly via none-ls
-        
-        -- Mejorar sugerencias de imports
-        autoImportCompletions = true,
-        completeFunctionParens = true,
-        
-        -- Desactivar diagnósticos redundantes
-        diagnosticSeverityOverrides = {
-          reportUnusedImport = "none",
-          reportUnusedVariable = "none",
-          reportMissingTypeStubs = "none",
-        },
+        typeCheckingMode = "off", -- Desactivar diagnósticos de tipos
+        diagnosticMode = "openFilesOnly",
+        autoImportCompletions = true, -- Importaciones inteligentes habilitadas
       },
     },
   },
 }
 
--- Python: ruff LSP - Para linting y formateo
--- Ruff funciona mejor como LSP que via none-ls
-lspconfig.ruff.setup {
-  on_attach = nvlsp.on_attach,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-  filetypes = { "python" },
-  init_options = {
-    settings = {
-      -- Configuración por defecto de ruff para evitar errores
-      -- Puedes sobrescribirla creando ruff.toml o pyproject.toml en tu proyecto
-      args = {},
-      logLevel = "error",
-    }
-  },
-}
-
--- CMake (comentado - instalar con :MasonInstall cmake-language-server si lo necesitas)
--- lspconfig.cmake.setup {
---   on_attach = nvlsp.on_attach,
---   on_init = nvlsp.on_init,
---   capabilities = nvlsp.capabilities,
---   cmd = { "cmake-language-server" },
---   filetypes = { "cmake" },
---   init_options = {
---     buildDirectory = "build",
---   },
--- }
-
--- C# (omnisharp)
-lspconfig.omnisharp.setup {
-  on_attach = nvlsp.on_attach,
-  on_init = nvlsp.on_init,
-  capabilities = nvlsp.capabilities,
-  cmd = { "omnisharp" },
-  filetypes = { "cs" },
-  root_dir = lspconfig.util.root_pattern("*.csproj", "*.sln", ".git"),
-}
+-- FILTRO GLOBAL DE SEGURIDAD (Doble capa de protección contra duplicados)
+local original_publish_diagnostics = vim.lsp.handlers["textDocument/publishDiagnostics"]
+vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  -- Si el mensaje viene de Pyright, lo descartamos para que solo Ruff hable.
+  if client and client.name == "pyright" then
+    return
+  end
+  return original_publish_diagnostics(err, result, ctx, config)
+end

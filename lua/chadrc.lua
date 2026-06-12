@@ -1,7 +1,3 @@
--- This file needs to have same structure as nvconfig.lua
--- https://github.com/NvChad/ui/blob/v2.5/lua/nvconfig.lua
--- Please read that file to know all available options :(
-
 ---@type ChadrcConfig
 local M = {}
 
@@ -11,74 +7,47 @@ M.base46 = {
     Comment = { italic = true },
     ["@comment"] = { italic = true },
   },
-
 }
-
-
 
 M.mason = {
   pkgs = {
-    --lua-
+    -- Lua
     "lua-language-server",
     "stylua",
 
-    --javascript-
-    "typescript-language-server", -- LSP
-    "prettierd", -- Formateador
-    "eslint_d", -- Linter
-    "js-debug-adapter", -- DAP
-
-    --CSS
-    "css-lsp", -- LSP
-    "tailwindcss-language-server", -- LSP
-    "stylelint", -- Linter
-    -- #"prettierd", -- Formateador
-
-    -- HTML
-    "html-lsp", -- LSP
-    "htmlhint", -- Linter
-    -- #"prettierd", -- Formateador
-
+    -- Web
+    "typescript-language-server",
+    "prettierd",
+    "eslint_d",
+    "css-lsp",
+    "tailwindcss-language-server",
+    "html-lsp",
 
     -- Python
-    "pyright", -- LSP principal (autocompletado, imports, análisis)
-    "ruff", -- Linter + Formateador + Organizador de imports (via none-ls)
-    "mypy", -- Type checker (alternativa 1, via none-ls)
-    -- "pyrefly", -- Type checker AI (alternativa 2, via none-ls) - Descomentar si lo usas
-    "debugpy", -- DAP
-    -- "black", -- DESACTIVADO - Ruff lo reemplaza
-    -- "isort", -- DESACTIVADO - Ruff lo reemplaza
-
-    -- Jinja
-    --"curlylint",
-    --"djlint",
-    --"jinja-lsp",
+    "pyright",
+    "ruff",
+    "debugpy",
 
     -- C/C++
     "clangd",
     "clang-format",
-    "ast-grep", 
 
-    -- CMake
-    "cmake-language-server", --LSP
-
-
-    --C#
+    -- C#
     "omnisharp",
     "csharpier",
     "netcoredbg",
 
-    --LaTex
-    "texlab",
-
-    --Bash
+    -- Bash
     "bash-language-server",
     "shellcheck",
     "shfmt",
 
-    -- Markdown
-    "marksman", -- LSP
-
+    -- Markdown & Others
+    "marksman",
+    "texlab",
+    "cmake-language-server",
+    "cmakelang",
+    "cmakelint",
   },
 }
 
@@ -86,5 +55,15 @@ M.nvdash = {
   load_on_startup = true,
 }
 
--- require('custom.commands')
+M.ui = {
+  cmp = {
+    icons_left = true,
+    style = "default", -- default/atom/atom_colored
+  },
+
+  statusline = {
+    theme = "default", -- default/vscode/vscode_colored/minimal
+  },
+}
+
 return M

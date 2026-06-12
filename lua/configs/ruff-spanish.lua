@@ -61,21 +61,20 @@ function M.translate_message(message)
   if not message then return message end
   
   local translated = message
+  local message_lower = message:lower()
   
   -- Intentar traducciones con patrones regex
   for pattern, translation in pairs(M.translations) do
-    if message:match(pattern) then
-      translated = message:gsub(pattern, translation)
-      break
-    end
-  end
-  
-  -- Si no se encontró traducción, intentar traducciones simples
-  if translated == message then
-    for english, spanish in pairs(M.translations) do
-      if not english:find("%*") and not english:find("%.") then
-        translated = translated:gsub(english, spanish)
+    local pattern_lower = pattern:lower()
+    if message_lower:find(pattern_lower) then
+      -- Usar el patrón original para el gsub si es un patrón complejo, 
+      -- o simplemente devolver la traducción si es un mensaje simple
+      if pattern:find("[%*%[%]%(%)]") then
+         translated = message:gsub(pattern, translation)
+      else
+         translated = translation
       end
+      break
     end
   end
   
