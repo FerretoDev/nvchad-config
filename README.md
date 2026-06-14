@@ -11,6 +11,7 @@ Esta es una configuración personalizada de Neovim construida sobre **NvChad v2.
 Optimizado principalmente para **Python** (lenguaje principal), desarrollo web y edición científica en **LaTeX**:
 
 - **Python**: Integración rápida con **Ruff** (LSP principal para diagnóstico, linter y formateador) y **Pyright** (configurado en silencio, exclusivamente para autocompletado y saltos de definición sin duplicar advertencias).
+- **Herramientas Python**: Selección interactiva de entornos virtuales (`venv-selector.nvim`), depuración con **DAP** (`nvim-dap-python` + `debugpy`) y suite de pruebas (`neotest` + `neotest-python`).
 - **Format on Save**: Formateo automático al guardar (`conform.nvim`) usando `stylua` para Lua, `ruff` para Python, `prettierd` para HTML/CSS/JS/JSON/Markdown y `clang-format` para C/C++.
 - **Edición LaTeX**: Soporte completo con **Vimtex** para compilación en vivo a PDF y navegación estructural de documentos.
 
@@ -57,6 +58,17 @@ Automatizaciones personalizadas para conectar tus proyectos en `~/Dev` con tus n
 - `<leader>lv` ➡️ Ver visor PDF (`zathura`/visor del sistema).
 - `<leader>lt` ➡️ Abrir la tabla de contenidos (índice del documento).
 
+### Python (Entornos, Depuración y Tests)
+
+- `<leader>vs` ➡️ Seleccionar entorno virtual (VenvSelect).
+- `<leader>db` ➡️ Alternar Breakpoint (DAP).
+- `<leader>dc` ➡️ Continuar depuración.
+- `<leader>di` / `<leader>do` ➡️ Paso adentro / Paso sobre.
+- `<leader>dt` ➡️ Terminar depuración.
+- `<leader>du` ➡️ Mostrar/ocultar panel de depuración (DAP UI).
+- `<leader>tn` / `<leader>tf` ➡️ Correr test cercano / test de archivo (Neotest).
+- `<leader>ts` ➡️ Mostrar panel resumen de tests.
+
 ---
 
 ## 📂 Estructura de Configuración
@@ -66,7 +78,7 @@ Para mantener el orden de NvChad y evitar deuda técnica, la configuración se o
 - [init.lua](file:///home/maru/.config/nvim/init.lua): Punto de entrada. Bootstrapea `lazy.nvim` y carga mapeos y comandos.
 - [lua/chadrc.lua](file:///home/maru/.config/nvim/lua/chadrc.lua): Configuraciones visuales, temas base46 y dependencias de Mason.
 - [lua/mappings.lua](file:///home/maru/.config/nvim/lua/mappings.lua): Punto de entrada que carga los atajos de teclado modulares de la carpeta `lua/mappings/`.
-- 📂 [lua/mappings/](file:///home/maru/.config/nvim/lua/mappings/): Atajos separados por áreas ([general.lua](file:///home/maru/.config/nvim/lua/mappings/general.lua), [projects.lua](file:///home/maru/.config/nvim/lua/mappings/projects.lua), [obsidian.lua](file:///home/maru/.config/nvim/lua/mappings/obsidian.lua), [latex.lua](file:///home/maru/.config/nvim/lua/mappings/latex.lua)).
+- 📂 [lua/mappings/](file:///home/maru/.config/nvim/lua/mappings/): Atajos separados por áreas ([general.lua](file:///home/maru/.config/nvim/lua/mappings/general.lua), [projects.lua](file:///home/maru/.config/nvim/lua/mappings/projects.lua), [obsidian.lua](file:///home/maru/.config/nvim/lua/mappings/obsidian.lua), [latex.lua](file:///home/maru/.config/nvim/lua/mappings/latex.lua), [dap.lua](file:///home/maru/.config/nvim/lua/mappings/dap.lua)).
 - [lua/custom/commands.lua](file:///home/maru/.config/nvim/lua/custom/commands.lua): Punto de entrada que carga las automatizaciones de la carpeta `lua/custom/commands/`.
 - 📂 [lua/custom/commands/](file:///home/maru/.config/nvim/lua/custom/commands/): Lógica de comandos separada ([autocmds.lua](file:///home/maru/.config/nvim/lua/custom/commands/autocmds.lua), [mason.lua](file:///home/maru/.config/nvim/lua/custom/commands/mason.lua), [projects.lua](file:///home/maru/.config/nvim/lua/custom/commands/projects.lua), [obsidian.lua](file:///home/maru/.config/nvim/lua/custom/commands/obsidian.lua)).
 - [lua/plugins/](file:///home/maru/.config/nvim/lua/plugins/): Declaración individual y lazy-loading de plugins externos.
