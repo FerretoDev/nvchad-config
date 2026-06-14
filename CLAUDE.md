@@ -63,6 +63,19 @@ Este repositorio contiene una configuración personalizada de Neovim basada en *
   - `<leader>lmb` ➡️ Insertar ecuación en bloque (`$$ \n $$`)
   - `<leader>ln` ➡️ Crear nuevo entorno LaTeX (`\begin{} ... \end{}`)
 
+### Python (Depuración y Tests)
+
+- `<leader>vs` ➡️ Seleccionar entorno virtual Python (`VenvSelect`)
+- `<leader>db` ➡️ Alternar Breakpoint (`DapToggleBreakpoint`)
+- `<leader>dc` ➡️ Continuar depuración (`DapContinue`)
+- `<leader>di` ➡️ Paso Adentro (`DapStepInto`)
+- `<leader>do` ➡️ Paso Sobre (`DapStepOver`)
+- `<leader>dt` ➡️ Terminar depuración (`DapTerminate`)
+- `<leader>du` ➡️ Alternar panel gráfico de depuración (`DapUiToggle`)
+- `<leader>tn` ➡️ Correr test cercano (Neotest)
+- `<leader>tf` ➡️ Correr test en el archivo actual (Neotest)
+- `<leader>ts` ➡️ Alternar resumen visual de tests (Neotest)
+
 ---
 
 ## 🎨 Pautas de Estilo y Formateo
@@ -122,6 +135,7 @@ Módulos individuales de atajos de teclado del usuario.
 - [projects.lua](file:///home/maru/.config/nvim/lua/mappings/projects.lua): Atajos para la navegación de directorios de desarrollo.
 - [obsidian.lua](file:///home/maru/.config/nvim/lua/mappings/obsidian.lua): Atajos para el vault, búsqueda, plantillas e Inbox.
 - [latex.lua](file:///home/maru/.config/nvim/lua/mappings/latex.lua): Atajos para Vimtex y matemáticas.
+- [dap.lua](file:///home/maru/.config/nvim/lua/mappings/dap.lua): Atajos para depuración con nvim-dap y debugpy.
 
 #### 📂 [lua/configs/](file:///home/maru/.config/nvim/lua/configs/)
 

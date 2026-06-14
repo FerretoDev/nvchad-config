@@ -80,6 +80,43 @@ return {
   { "nvchad/volt", lazy = true },
   { "nvchad/menu", lazy = true },
 
+  {
+    "linux-cultist/venv-selector.nvim",
+    dependencies = { "neovim/nvim-lspconfig", "nvim-telescope/telescope.nvim", "mfussenegger/nvim-dap-python" },
+    opts = {
+      name = { "venv", ".venv" },
+      auto_refresh = true,
+    },
+    keys = {
+      { "<leader>vs", "<cmd>VenvSelect<cr>", desc = "Seleccionar Entorno Virtual" },
+    },
+  },
+
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-neotest/neotest-python",
+    },
+    config = function()
+      require("neotest").setup({
+        adapters = {
+          require("neotest-python")({
+            dap = { justMyCode = false },
+          }),
+        },
+      })
+    end,
+    keys = {
+      { "<leader>tn", function() require("neotest").run.run() end, desc = "Correr Test Cercano" },
+      { "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%")) end, desc = "Correr Test Archivo" },
+      { "<leader>ts", function() require("neotest").summary.toggle() end, desc = "Alternar Resumen Tests" },
+    },
+  },
+
   -- Importar plugins modulares
   require "plugins.carbon",
   require "plugins.supermaven",
