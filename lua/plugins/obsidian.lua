@@ -11,7 +11,28 @@ return {
     workspaces = {
       {
         name = "obsidian-student-vault",
-        path = "/home/maru/Sync/Obsidian/Cloud Files/obsidian-student-vault",
+        path = function()
+          local buf_dir = vim.fn.expand("%:p:h")
+          if buf_dir == "" or buf_dir:match("^%w+://") then
+            buf_dir = vim.fn.getcwd()
+          end
+
+          local obsidian_dir = vim.fs.find(".obsidian", {
+            path = buf_dir,
+            upward = true,
+            stop = vim.env.HOME,
+          })[1]
+
+          if obsidian_dir then
+            return vim.fs.dirname(obsidian_dir)
+          end
+
+          local fallback = "/home/maru/Sync/Obsidian/Cloud Files/obsidian-student-vault"
+          if vim.fn.isdirectory(fallback) == 1 then
+            return fallback
+          end
+          return vim.fn.getcwd()
+        end,
         overrides = {
           notes_subdir = "000 - Inbox",
           new_notes_location = "000 - Inbox",
