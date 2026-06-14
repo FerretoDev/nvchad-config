@@ -4,10 +4,10 @@ return {
     config = function()
         -- Habilitar Copilot en tipos de archivo de texto/Markdown
         vim.g.copilot_filetypes = {
-            markdown = true,
-            ["markdown.mdx"] = true,
+            markdown = false,
+            ["markdown.mdx"] = false,
             gitcommit = true,
-            text = true,
+            text = false,
             TelescopePrompt = false,
         }
 

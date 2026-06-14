@@ -50,7 +50,12 @@ return {
           end,
 
           follow_url_func = function(url)
-            vim.ui.open(url)
+            if url:match("^file://") then
+              local path = url:gsub("^file://", "")
+              vim.cmd("edit " .. path)
+            else
+              vim.ui.open(url)
+            end
           end,
 
           use_advanced_uri = false,
