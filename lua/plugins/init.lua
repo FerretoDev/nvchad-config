@@ -89,4 +89,5 @@ return {
   require "plugins.vimtex",
   require "plugins.copilot",
   require "plugins.lspkind",
+  require "plugins.render-markdown",
 }

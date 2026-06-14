@@ -1,0 +1,16 @@
+-- Atajos de teclado para Obsidian y gestión de conocimiento (PKM)
+local map = vim.keymap.set
+
+map("n", "<leader>o", "<Nop>", { desc = "Obsidian" })
+map("n", "<leader>of", "<cmd>ObsidianSearch<cr>", { desc = "Buscar notas por contenido" })
+map("n", "<leader>on", "<Nop>", { desc = "Nueva nota" })
+map("n", "<leader>onn", "<cmd>ObsidianNew<cr>", { desc = "Nueva nota (sin template)" })
+map("n", "<leader>ont", "<cmd>ObsidianNewFromTemplate<cr>", { desc = "Nueva nota de plantilla" })
+map("n", "<leader>ob", "<cmd>ObsidianBacklinks<cr>", { desc = "Ver backlinks" })
+map("n", "<leader>ot", "<cmd>ObsidianToday<cr>", { desc = "Nota diaria" })
+map("n", "<leader>ol", "<cmd>ObsidianLinks<cr>", { desc = "Ver enlaces" })
+map("n", "<leader>oo", "<cmd>ObsidianOpen<cr>", { desc = "Abrir en aplicación Obsidian" })
+map("n", "<leader>os", "<cmd>ObsidianQuickSwitch<cr>", { desc = "Cambiar nota rápido (por título)" })
+map("n", "<leader>oi", "<cmd>ObsidianTemplate<cr>", { desc = "Insertar plantilla" })
+map("n", "<leader>opn", "<cmd>ObsidianProjectNote<cr>", { desc = "Nota del proyecto actual" })
+map("n", "<leader>oc", "<cmd>ObsidianCapture<cr>", { desc = "Captura rápida en Inbox" })
