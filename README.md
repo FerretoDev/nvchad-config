@@ -19,8 +19,9 @@ Optimizado principalmente para **Python** (lenguaje principal), desarrollo web y
 Integración nativa con **Obsidian** mediante `obsidian.nvim`:
 
 - Apunta directamente al vault local en `~/Sync/Obsidian/Cloud Files/obsidian-student-vault`.
-- Carga perezosa (*lazy-loading*) exclusiva para tipos de archivo `markdown` para evitar ralentizar el inicio del editor en proyectos de código.
-- Configuración visual limpia con `conceallevel = 2` para esconder la sintaxis de corchetes y atajos integrados para marcar checkboxes (`<leader>och`).
+- Carga perezosa (_lazy-loading_) exclusiva para tipos de archivo `markdown` para evitar ralentizar el inicio del editor en proyectos de código.
+- Configuración visual limpia con `conceallevel = 2` para esconder sintaxis de corchetes, y renderizado estético de tablas, checkboxes, callouts y bloques de código usando `render-markdown.nvim` (la interfaz visual de `obsidian.nvim` se ha desactivado para evitar conflictos).
+- Atajos integrados para marcar checkboxes (`<leader>och`).
 
 ### 3. Puente Código ↔️ Conocimiento
 
@@ -47,6 +48,7 @@ Automatizaciones personalizadas para conectar tus proyectos en `~/Dev` con tus n
 - `<leader>opn` ➡️ Abrir/Crear nota técnica para el proyecto de desarrollo activo.
 - `<leader>ot` ➡️ Ir a la nota diaria (Daily Note).
 - `<leader>onn` / `<leader>ont` ➡️ Crear nota nueva (vacía o desde plantilla).
+- `<leader>oc` ➡️ Captura rápida de ideas/fleeting notes en Inbox.
 - `gf` ➡️ Seguir enlace de nota (abre archivos locales `file://` dentro de Neovim).
 
 ### LaTeX / Documentos (`<leader>l`)
@@ -59,14 +61,16 @@ Automatizaciones personalizadas para conectar tus proyectos en `~/Dev` con tus n
 
 ## 📂 Estructura de Configuración
 
-Para mantener el orden de NvChad, la configuración se divide en módulos Lua:
+Para mantener el orden de NvChad y evitar deuda técnica, la configuración se organiza de forma modular:
 
-- [init.lua](file:///home/maru/.config/nvim/init.lua): bootstrap de cargador y llamado a comandos/mapeos.
-- [lua/chadrc.lua](file:///home/maru/.config/nvim/lua/chadrc.lua): configuraciones visuales, temas base46 y lista de dependencias Mason.
-- [lua/mappings.lua](file:///home/maru/.config/nvim/lua/mappings.lua): atajos de teclado globales y menús Which-Key.
-- [lua/custom/commands.lua](file:///home/maru/.config/nvim/lua/custom/commands.lua): comandos personalizados de automatización (Mason, Proyectos, Notas).
-- [lua/plugins/](file:///home/maru/.config/nvim/lua/plugins/): declaración individual de plugins (`obsidian.lua`, `cmp.lua`, `copilot.lua`, `vimtex.lua`, etc.).
-- [lua/configs/](file:///home/maru/.config/nvim/lua/configs/): configuraciones detalladas de herramientas (`lspconfig.lua`, `conform.lua`, `lint.lua`).
-- [ftplugin/markdown.lua](file:///home/maru/.config/nvim/ftplugin/markdown.lua): opciones estéticas e idiomáticas dedicadas para notas markdown.
+- [init.lua](file:///home/maru/.config/nvim/init.lua): Punto de entrada. Bootstrapea `lazy.nvim` y carga mapeos y comandos.
+- [lua/chadrc.lua](file:///home/maru/.config/nvim/lua/chadrc.lua): Configuraciones visuales, temas base46 y dependencias de Mason.
+- [lua/mappings.lua](file:///home/maru/.config/nvim/lua/mappings.lua): Punto de entrada que carga los atajos de teclado modulares de la carpeta `lua/mappings/`.
+- 📂 [lua/mappings/](file:///home/maru/.config/nvim/lua/mappings/): Atajos separados por áreas ([general.lua](file:///home/maru/.config/nvim/lua/mappings/general.lua), [projects.lua](file:///home/maru/.config/nvim/lua/mappings/projects.lua), [obsidian.lua](file:///home/maru/.config/nvim/lua/mappings/obsidian.lua), [latex.lua](file:///home/maru/.config/nvim/lua/mappings/latex.lua)).
+- [lua/custom/commands.lua](file:///home/maru/.config/nvim/lua/custom/commands.lua): Punto de entrada que carga las automatizaciones de la carpeta `lua/custom/commands/`.
+- 📂 [lua/custom/commands/](file:///home/maru/.config/nvim/lua/custom/commands/): Lógica de comandos separada ([autocmds.lua](file:///home/maru/.config/nvim/lua/custom/commands/autocmds.lua), [mason.lua](file:///home/maru/.config/nvim/lua/custom/commands/mason.lua), [projects.lua](file:///home/maru/.config/nvim/lua/custom/commands/projects.lua), [obsidian.lua](file:///home/maru/.config/nvim/lua/custom/commands/obsidian.lua)).
+- [lua/plugins/](file:///home/maru/.config/nvim/lua/plugins/): Declaración individual y lazy-loading de plugins externos.
+- [lua/configs/](file:///home/maru/.config/nvim/lua/configs/): Configuraciones detalladas de herramientas core del editor (LSP, conform, linting).
+- [ftplugin/markdown.lua](file:///home/maru/.config/nvim/ftplugin/markdown.lua): Reglas estéticas y de corrección ortográfica aplicadas exclusivamente a notas Markdown.
 
-*Para un desglose completo, consulta el archivo de instrucciones para agentes en [CLAUDE.md](file:///home/maru/.config/nvim/CLAUDE.md).*
+_Para un desglose técnico completo, consulta el archivo de instrucciones para agentes en [CLAUDE.md](file:///home/maru/.config/nvim/CLAUDE.md)._

@@ -46,7 +46,7 @@ return {
                 suffix = suffix .. string.char(math.random(65, 90))
               end
             end
-            return tostring(os.time()) .. "-" .. suffix
+            return os.date("%Y-%m-%d") .. "-" .. suffix
           end,
 
           follow_url_func = function(url)
@@ -68,6 +68,9 @@ return {
           },
         },
       },
+    },
+    ui = {
+      enable = false, -- Desactivar UI para evitar conflictos con render-markdown
     },
     completion = {
       nvim_cmp = true,
