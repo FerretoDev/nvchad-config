@@ -1,6 +1,20 @@
 -- Comandos personalizados para Obsidian y PKM usando APIs nativas Lua (plenary/vim.fs)
 local function open_project_note()
-  local vault_dir = "/home/maru/Sync/Obsidian/Cloud Files/obsidian-student-vault"
+  -- Asegurar que obsidian.nvim esté cargado para registrar los comandos y configurar el cliente
+  local ok_lazy, lazy = pcall(require, "lazy")
+  if ok_lazy then
+    lazy.load({ plugins = { "obsidian.nvim" } })
+  end
+
+  local ok_obs, obs = pcall(require, "obsidian")
+  if not ok_obs then
+    vim.notify("No se pudo cargar el plugin obsidian.nvim", vim.log.levels.ERROR)
+    return
+  end
+
+  local client = obs.get_client()
+  local vault_dir = tostring(client.current_workspace.path)
+
   if vim.fn.isdirectory(vault_dir) == 0 then
     vim.notify("El vault de Obsidian no se encontró en: " .. vault_dir, vim.log.levels.ERROR)
     return
@@ -43,6 +57,12 @@ end
 
 -- Captura rápida en la carpeta Inbox (fleeting notes / ideas)
 local function capture_inbox_note()
+  -- Asegurar que obsidian.nvim esté cargado
+  local ok_lazy, lazy = pcall(require, "lazy")
+  if ok_lazy then
+    lazy.load({ plugins = { "obsidian.nvim" } })
+  end
+
   -- Usamos Zettel-time (YYYY-MM-DD-HHMM) para evitar colisiones y mantener orden temporal
   local note_name = os.date("%Y-%m-%d-%H%M")
   vim.cmd("ObsidianNew " .. note_name)
