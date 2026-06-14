@@ -2,7 +2,27 @@ return {
   "epwalsh/obsidian.nvim",
   version = "*", -- recommended, use latest release instead of latest commit
   lazy = true,
-  ft = "markdown",
+  init = function()
+    -- Solo cargar obsidian.nvim si el archivo markdown abierto está dentro de un vault de Obsidian
+    vim.api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
+      group = vim.api.nvim_create_augroup("LazyLoadObsidian", { clear = true }),
+      pattern = "*.md",
+      callback = function(ev)
+        local file_dir = vim.fs.dirname(ev.match)
+        if file_dir then
+          local obsidian_dir = vim.fs.find(".obsidian", {
+            path = file_dir,
+            upward = true,
+            stop = vim.env.HOME,
+          })[1]
+
+          if obsidian_dir then
+            require("lazy").load({ plugins = { "obsidian.nvim" } })
+          end
+        end
+      end,
+    })
+  end,
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-telescope/telescope.nvim",
