@@ -17,6 +17,7 @@ return {
             buf_dir = vim.fn.getcwd()
           end
 
+          -- 1. Buscar hacia arriba si el archivo actual o CWD está dentro de un vault de Obsidian
           local obsidian_dir = vim.fs.find(".obsidian", {
             path = buf_dir,
             upward = true,
@@ -27,6 +28,24 @@ return {
             return vim.fs.dirname(obsidian_dir)
           end
 
+          -- 2. Intentar leer los vaults desde la configuración oficial de Obsidian (obsidian.json)
+          local config_path = vim.env.HOME .. "/.config/obsidian/obsidian.json"
+          if vim.fn.filereadable(config_path) == 1 then
+            local ok, content = pcall(vim.fn.readfile, config_path)
+            if ok and content and #content > 0 then
+              local json_str = table.concat(content, "")
+              local ok_json, data = pcall(vim.fn.json_decode, json_str)
+              if ok_json and data and data.vaults then
+                for _, vault in pairs(data.vaults) do
+                  if vault.path and vim.fn.isdirectory(vault.path) == 1 then
+                    return vault.path
+                  end
+                end
+              end
+            end
+          end
+
+          -- 3. Respaldo final si no estamos dentro de un vault ni hay configurados
           local fallback = "/home/maru/Sync/Obsidian/Cloud Files/obsidian-student-vault"
           if vim.fn.isdirectory(fallback) == 1 then
             return fallback
