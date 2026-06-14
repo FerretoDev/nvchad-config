@@ -23,6 +23,8 @@ return {
             mapping = cmp.mapping.preset.insert(mappings),
             sources = cmp.config.sources({
                 { name = "nvim_lsp",     priority = 1000 }, -- Completado de LSP (máxima prioridad)
+                { name = "obsidian",     priority = 850 },  -- Sugerencias de Obsidian
+                { name = "obsidian_new", priority = 800 },  -- Crear nueva nota desde cmp
                 { name = "luasnip",      priority = 750 },  -- Snippets con LuaSnip
                 { name = "buffer",       priority = 500 },  -- Texto en el buffer actual
                 { name = "path",         priority = 250 },  -- Rutas de archivos

@@ -34,6 +34,7 @@ require "nvchad.autocmds"
 
 vim.schedule(function()
   require "mappings"
+  pcall(require, "custom.commands")
 end)
 
 vim.opt.conceallevel = 1 -- O usa 2 si prefieres mayor ocultamiento
